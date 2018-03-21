@@ -8,8 +8,10 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
 
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,6 +43,64 @@ public class RedisSpout extends BaseRichSpout {
         this.port = port;
         this.channel = channel;
     }
+    class ListenerThread extends Thread {
+        LinkedBlockingQueue<String> queue;
+        JedisPool pool;
+        String pattern;
+
+        public ListenerThread(LinkedBlockingQueue<String> queue, JedisPool pool, String pattern) {
+            this.queue = queue;
+            this.pool = pool;
+            this.pattern = pattern;
+        }
+
+        public void run() {
+
+            JedisPubSub listener = new JedisPubSub() {
+
+                @Override
+                public void onMessage(String channel, String message) {
+                    queue.offer(message);
+                }
+
+                @Override
+                public void onPMessage(String pattern, String channel, String message) {
+                    queue.offer(message);
+                }
+
+                @Override
+                public void onPSubscribe(String channel, int subscribedChannels) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onPUnsubscribe(String channel, int subscribedChannels) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onSubscribe(String channel, int subscribedChannels) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                @Override
+                public void onUnsubscribe(String channel, int subscribedChannels) {
+                    // TODO Auto-generated method stub
+
+                }
+            };
+
+            Jedis jedis = pool.getResource();
+            try {
+                jedis.psubscribe(listener, pattern);
+            } finally {
+                pool.returnResource(jedis);
+            }
+        }
+    };
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {

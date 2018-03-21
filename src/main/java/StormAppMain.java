@@ -10,9 +10,7 @@ import spouts.RedisSpout;
 public class StormAppMain {
 
     private static String REDIS_HOST="10.8.0.26";
-    private static  int REDIS_PORT=6379;
-    private static String CHANNEL="Paciente1";
-    private static String CHANNEL2="Paciente2";
+    private static int PORT=6379;
 
     public static void main(String[] args) throws Exception{
 
@@ -27,8 +25,8 @@ public class StormAppMain {
         //Constructor para la topologia
         TopologyBuilder builder = new TopologyBuilder();
         //spout con redis server suscrito al canal (CHANNEL)
-        builder.setSpout("redisspout",new RedisSpout(REDIS_HOST,REDIS_PORT,CHANNEL));
-        builder.setSpout("redisspout2",new RedisSpout(REDIS_HOST,REDIS_PORT,CHANNEL2));
+        builder.setSpout("redisspout",new RedisSpout(REDIS_HOST,PORT,"Paciente1"));
+        builder.setSpout("redisspout2",new RedisSpout(REDIS_HOST,PORT,"Paciente2"));
         //bolts
         //FilterOne recibe informacion desde los spouts
         builder.setBolt("filterone", new FilterOne())
