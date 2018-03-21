@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -51,7 +50,8 @@ public class RedisSpout extends BaseRichSpout {
         //Se crea una cola con capacidad de 1000 mensajes
         queue = new LinkedBlockingQueue<String>(1000);
         pool = new JedisPool(new JedisPoolConfig(),host,port); //canal de comunicacion con el redis server
-        ListenerThread listener = new ListenerThread(queue,pool,channel); //Para recibir constantemente del server
+        ListenerThread listener = new ListenerThread(queue,pool,channel);
+        //Para recibir constantemente del server
         listener.start(); //se empieza  a escuchar
     }
 

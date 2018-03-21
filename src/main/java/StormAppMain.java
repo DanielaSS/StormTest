@@ -9,9 +9,9 @@ import spouts.RedisSpout;
  */
 public class StormAppMain {
 
-    private static String REDIS_HOST="10.2.67.3";
+    private static String REDIS_HOST="10.8.0.26";
     private static  int REDIS_PORT=6379;
-    private static String CHANNEL="Paciente";
+    private static String CHANNEL="Paciente1";
     private static String CHANNEL2="Paciente2";
 
     public static void main(String[] args) throws Exception{
@@ -28,10 +28,12 @@ public class StormAppMain {
         TopologyBuilder builder = new TopologyBuilder();
         //spout con redis server suscrito al canal (CHANNEL)
         builder.setSpout("redisspout",new RedisSpout(REDIS_HOST,REDIS_PORT,CHANNEL));
+        builder.setSpout("redisspout2",new RedisSpout(REDIS_HOST,REDIS_PORT,CHANNEL2));
         //bolts
         //FilterOne recibe informacion desde los spouts
         builder.setBolt("filterone", new FilterOne())
-                .shuffleGrouping("redisspout");
+                .shuffleGrouping("redisspout")
+                .shuffleGrouping("redisspout2");
         //Crea un archivo con los datos procesados por cada filtro.
         builder.setBolt("printsignal",new PrintSignalBolt())
                 .shuffleGrouping("filterone");
