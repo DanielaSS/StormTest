@@ -11,7 +11,8 @@ public class StormAppMain {
 
     private static String REDIS_HOST="10.2.67.3";
     private static  int REDIS_PORT=6379;
-    private static String CHANNEL="Hola";
+    private static String CHANNEL="Paciente";
+    private static String CHANNEL2="Paciente2";
 
     public static void main(String[] args) throws Exception{
 
@@ -31,20 +32,9 @@ public class StormAppMain {
         //FilterOne recibe informacion desde los spouts
         builder.setBolt("filterone", new FilterOne())
                 .shuffleGrouping("redisspout");
-        //FilterTwo recibe informacion del spout2 solamnete
-        builder.setBolt("filtertwo", new FilterTwo())
-                .shuffleGrouping("redisspout");
-        //FilterFour recibe informacion filtro dos con etiquetas four
-        builder.setBolt("filterfour", new FilterFour())
-                .shuffleGrouping("filtertwo","four");
-        //FilterFour recibe informacion filtro tres con etiquetas three
-        builder.setBolt("filterthree", new FilterThree())
-                .shuffleGrouping("filtertwo","three");
         //Crea un archivo con los datos procesados por cada filtro.
         builder.setBolt("printsignal",new PrintSignalBolt())
-                .shuffleGrouping("filterone")
-                .shuffleGrouping("filterthree")
-                .shuffleGrouping("filterfour");
+                .shuffleGrouping("filterone");
         /*
         //Ejecucion en el cluster.
         StormSubmitter.submitTopology("analysisSignalsRedis", config, builder.createTopology());
