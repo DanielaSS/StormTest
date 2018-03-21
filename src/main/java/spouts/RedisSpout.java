@@ -43,7 +43,7 @@ public class RedisSpout extends BaseRichSpout {
         this.port = port;
         this.channel = channel;
     }
-    class ListenerThread extends Thread {
+    /*class ListenerThread extends Thread {
         LinkedBlockingQueue<String> queue;
         JedisPool pool;
         String pattern;
@@ -100,7 +100,7 @@ public class RedisSpout extends BaseRichSpout {
                 pool.returnResource(jedis);
             }
         }
-    };
+    };*/
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
