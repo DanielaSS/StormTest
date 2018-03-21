@@ -34,7 +34,7 @@ public class PrintSignalBolt  extends BaseRichBolt {
         BufferedWriter output;
         try {
             //Creacion de los archivos con nombre la identificacion del paciente, mas los filtros aplicados a la senal
-            output = new BufferedWriter(new FileWriter("/home/danielasa/Public/"+input.getString(0)+".out", true));
+            output = new BufferedWriter(new FileWriter("/home/local/LABINFO/2105684/Public/"+input.getString(0)+".out", true));
             LOG.info("PrintSignal .______________________________________________________."+input.getString(0));
             //Agregamos el valor de la senal procesada
             double [] temp=(double[]) input.getValue(1);
